@@ -2,9 +2,11 @@ class Board
   attr_reader :board_locations, :available_locations
 
   private
-    attr_writer :board_locations, :available_locations
 
-    attr_accessor :grid, :board_dimension, :amount_of_locations
+  attr_writer :board_locations, :available_locations
+
+  attr_accessor :grid, :board_dimension, :amount_of_locations
+
   public
 
   def initialize(board_dimension)
@@ -29,7 +31,7 @@ class Board
   def []=(location, player_symbol)
     row, col = board_locations[location]
 
-    self.grid[row][col] = player_symbol
+    grid[row][col] = player_symbol
 
     update_available_locations(available_locations, location)
   end
@@ -43,28 +45,28 @@ class Board
   def populate_grid(amount_of_locations)
     location_number = 1
 
-    while location_number <= amount_of_locations do
+    while location_number <= amount_of_locations
       grid.each_with_index do |row, row_index|
-        row.each_with_index do |col, col_index|
-          self.grid[row_index][col_index] = location_number
+        row.each_with_index do |_col, col_index|
+          grid[row_index][col_index] = location_number
 
           location_number += 1
         end
-      end 
+      end
     end
   end
 
   def generate_locations(amount_of_locations)
     location = 1
 
-    while location <= amount_of_locations do
+    while location <= amount_of_locations
       grid.each_with_index do |row, row_index|
-        row.each_with_index do |col, col_index|
-          self.board_locations[location] = [row_index, col_index]
+        row.each_with_index do |_col, col_index|
+          board_locations[location] = [row_index, col_index]
 
           location += 1
         end
-      end 
+      end
     end
   end
 
@@ -76,7 +78,7 @@ class Board
 
   def generate_grid_output(amount_of_locations)
     grid_output = ''
-    
+
     max_location_digits = get_location_digits(amount_of_locations)
 
     underscores = ''
@@ -96,20 +98,11 @@ class Board
       row.each_with_index do |_col, col_index|
         current_square = grid[row_index][col_index]
 
-        if current_square.class == Integer
-          current_location_digits = get_location_digits(current_location_number)
-        elsif current_square.class == String
-          current_square_length = current_square.length
-        end
+        length_difference = max_location_digits - find_square_length(current_square)
+        length_difference.times { grid_output += ' ' }
 
-        if (current_location_digits or current_square_length) < max_location_digits
-          length_difference = max_location_digits - (current_location_digits or current_square_length)
-          
-          length_difference.times { grid_output += ' ' }
-        end
-
-        grid_output += "#{current_square}"
-        grid_output +=  ' ' + ' ' + '|' + ' ' + ' ' unless col_index == row.length - 1
+        grid_output += current_square.to_s
+        grid_output += ' ' + ' ' + '|' + ' ' + ' ' unless col_index == row.length - 1
 
         current_location_number += 1
       end
@@ -124,6 +117,20 @@ class Board
   def get_location_digits(location_number)
     (Math.log10(location_number) + 1).to_i
   end
+
+  # Determines wether or not the a given square has been "filled", ie:
+  # selected/played by one of the players.
+  # If its value is an integer, it hasn't been touched since we called populate_grid,
+  # so we know it hasn't been selected. Otherwise, it'll be a string - the
+  # symbol of the player which has selected it. And in that case, it has been filled.
+
+  def square_filled?(grid_square)
+    grid_square.instance_of?(String)
+  end
+
+  def find_square_length(square)
+    square_filled?(square) ? square.length : get_location_digits(square)
+  end
 end
 
 # Don't mind the pieces of code bellow, i'm just testing the class
@@ -132,10 +139,11 @@ end
 # I'll remove it once i'm done with the class, so if you you're in this
 # commit, coming from a point where the class is already complete,
 # don't mind the discrepancy, there's nothing important about it.
-  
+
 board = Board.new(5)
- 
-puts 'New game initiated.'; puts ''
+
+puts 'New game initiated.'
+puts ''
 
 board.display_grid
 
@@ -144,11 +152,12 @@ board[6] = 'X'
 board[11] = 'X'
 board[16] = 'X'
 
+puts ''
 
-puts 'New board'; puts ''
+10.times { print '= ' }
+print 'New board '
+10.times { print '= ' }
 
-10.times { print '=' }; puts ''
+puts ''
 
 board.display_grid
-  
-    
