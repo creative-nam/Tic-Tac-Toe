@@ -1,11 +1,11 @@
-class Position
+class Location
   private
-    attr_accessor :board_location, :available_location, :location
+    attr_accessor :board_locations, :available_locations, :location
   public
   
-  def initialize(board_location, available_location, player_name)
-    self.board_location = board_location
-    self.available_location = available_location
+  def initialize(board_locations, available_locations, player_name)
+    self.board_locations = board_locations
+    self.available_locations = available_locations
   end
 
   def value
@@ -30,22 +30,59 @@ class Position
   end
 
   def in_range?(location)
-    board_location.include?(location)
+    board_locations.include?(location.to_i)
   end
 
   def available?(location)
-    available_location.include?(location)
+    available_locations.include?(location.to_i)
   end
 
   def valid?(location)
-    in_range?(location) && available?(location) && valid_format?(location, location)
+    valid_format?(location) && in_range?(location) && available?(location) 
+  end
+
+  def find_error(location)
+    case
+    when !valid_format?(location) then invalid_format_error
+    when !in_range?(location) then out_of_range_location_error(location)
+    when !available?(location) then filled_location_error(location)
+    end
+  end
+  
+  def filled_location_error(location)
+    <<-EOS
+      ERROR! The location #{location} is filled already.
+      Please, select one of the available locations (marked by a number) ONLY.
+    EOS
+  end
+  
+  def out_of_range_location_error(location)
+    <<~EOS
+      \t  ERROR! The location #{location} is out of range.
+      \t  Please select a valid location - FROM #{board_locations.min} to #{board_locations.max} ONLY,\
+          on screen, and which hasn't been selected yet.
+    EOS
+  end
+  
+  def invalid_format_error
+    <<-EOS
+      ERROR! The location's format is invalid.
+      The location must be a positive, whole number, inside the given range.
+    EOS
   end
 end
 
-# board_location = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-# available_location = [1, 2, 3, 4, 5, 6, 7, 8]
+# Don't mind the pieces of code bellow, i'm just testing the class
+# as i go, to check if it's producing the desired behaviors/results
+
+# I'll remove it once i'm done with the class, so if you you're in this
+# commit, coming from a point where the class is already complete,
+# don't mind the discrepancy, there's nothing important about it.
+
+# board_locations = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+# available_locations = [1, 2, 3, 4, 5, 6, 7, 8]
 # player_name = "p1"
-# location = location.new(board_location, available_location, player_name).value
+# location = location.new(board_locations, available_locations, player_name).value
 
 # p location
 # puts location
