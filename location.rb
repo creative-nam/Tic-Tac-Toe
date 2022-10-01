@@ -6,6 +6,8 @@ class Location
   def initialize(board_locations, available_locations, player_name)
     self.board_locations = board_locations
     self.available_locations = available_locations
+
+    self.location = get_location(player_name)
   end
 
   def value
@@ -13,6 +15,21 @@ class Location
   end
 
   private
+
+  def get_location(player_name)
+    user_given_location = nil
+    
+    until valid?(user_given_location)
+      puts "Where would you like to play #{player_name}?"
+      user_given_location = gets.chomp
+  
+      unless valid?(user_given_location)
+        error_to_output = find_error(user_given_location)
+        puts error_to_output
+      end
+    end
+    user_given_location.to_i
+  end
 
   # Here we're trying to find out if the location the user inputted is
   # indeed a number (as it should be). 

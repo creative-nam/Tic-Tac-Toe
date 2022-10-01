@@ -147,17 +147,30 @@ puts ''
 
 board.display_grid
 
-board[1] = 'X'
-board[6] = 'X'
-board[11] = 'X'
-board[16] = 'X'
+require_relative 'location.rb'
 
-puts ''
+player_num = 1
+round_num = 1
 
-10.times { print '= ' }
-print 'New board '
-10.times { print '= ' }
+until board.available_locations.empty?  
+  player_num = player_num == 1 ? 2 : 1 unless round_num == 1
+  player_name = "Player #{player_num}" 
 
-puts ''
+  location = Location.new(board.board_locations.keys, board.available_locations, player_name).value
+  puts ''
+
+  board[location] = player_num == 1 ? 'X' : 'O'
+
+  10.times { print ' = ' }
+  print "New board; Round #{round_num}"
+  10.times { print ' = ' }
+
+  puts ''
+  board.display_grid
+  puts ''
+  
+  round_num += 1
+end
+
 
 board.display_grid
