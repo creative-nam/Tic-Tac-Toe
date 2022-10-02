@@ -1,4 +1,4 @@
-class Name
+class PlayerName
   private
 
   attr_accessor :current_player, :taken_name, :name
@@ -26,9 +26,7 @@ class Name
       10.times { print '---' }
       puts ''
 
-      puts "Please enter Player #{current_player}'s name: "
-      puts "(Your name cannot be #{taken_name}, since it's taken.)" if taken_name
-
+      puts name_prompt_message(current_player, taken_name)
       user_input = gets.chomp
 
       puts find_error(user_input) unless valid?(user_input)
@@ -68,5 +66,15 @@ class Name
       Error! Taken name.
       You cannot use the name "#{name}" because another player already chose it.
     ERROR_MSG
+  end
+
+  def name_prompt_message(current_player, taken_name)
+    taken_name_warning = "(Your name cannot be #{taken_name}, since it's taken.)"
+
+    msg = <<~NAME_PROMPT_MSG
+      Please enter Player #{current_player}'s name:#{' '}
+    NAME_PROMPT_MSG
+
+    taken_name ? msg + taken_name_warning : msg
   end
 end

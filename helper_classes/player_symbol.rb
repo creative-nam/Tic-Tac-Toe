@@ -1,4 +1,4 @@
-class Symbol
+class PlayerSymbol
   private
 
   attr_accessor :player_name, :taken_symbol, :symbol
@@ -11,7 +11,7 @@ class Symbol
     self.player_name = player_name
     self.taken_symbol = taken_symbol
 
-    self.symbol = get_symbol(player_name)
+    self.symbol = get_symbol(player_name, taken_symbol)
   end
 
   def value
@@ -28,9 +28,7 @@ class Symbol
       10.times { print '---' }
       puts ''
 
-      puts "#{player_name}, please enter a single, alphabetic character as your symbol:"
-      puts "(Your symbol cannot be #{taken_symbol}, since it's taken)" if taken_symbol
-
+      puts symbol_prompt_message(player_name, taken_symbol)
       user_input = gets.chomp
 
       puts find_error(user_input) unless valid?(user_input)
@@ -54,10 +52,10 @@ class Symbol
   end
 
   def taken?(symbol)
-    symbol == @@taken_symbol
+    symbol == taken_symbol
   end
 
-  def find_symbol_error(symbol)
+  def find_error(symbol)
     if !valid_length?(symbol)
       invalid_length_error
     elsif !valid_char?(symbol)
@@ -75,10 +73,10 @@ class Symbol
   end
 
   def invalid_char_error
-    <<-ERROR_MSG
-      ERROR! Invalid symbol character.
-      Your symbol must be letter an alphabetic character, or one of the\
-      following special characters: #{@@accepted_special_chars}#{' '}
+    <<~ERROR_MSG
+      \tERROR! Invalid symbol character.
+      \tYour symbol must be letter an alphabetic character, or one of the \
+      following special characters: #{@@accepted_special_chars}.
     ERROR_MSG
   end
 
@@ -87,5 +85,17 @@ class Symbol
       Error! Taken symbol.
       You cannot use the symbol "#{symbol}" because another player already chose it.
     ERROR_MSG
+  end
+
+  def symbol_prompt_message(player_name, taken_symbol)
+    taken_symbol_warning = "(Your symbol cannot be #{taken_symbol}, since it's taken)"
+
+    msg = <<~SYMBOL_PROMPT_MSG
+      #{player_name}, please enter a single character as your symbol:
+      (Your symbol can be a letter, or one of the following special \
+      characters: #{@@accepted_special_chars})
+    SYMBOL_PROMPT_MSG
+
+    taken_symbol ? msg + taken_symbol_warning : msg
   end
 end
