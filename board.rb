@@ -140,26 +140,29 @@ end
 # commit, coming from a point where the class is already complete,
 # don't mind the discrepancy, there's nothing important about it.
 
-board = Board.new(5)
+board = Board.new(3)
 
 puts 'New game initiated.'
 puts ''
 
 board.display_grid
 
-require_relative 'location.rb'
+require_relative 'player.rb'
 
-player_num = 1
+p1 = Player.new()
+p2 = Player.new()
+
+current_player = p1
 round_num = 1
 
-until board.available_locations.empty?  
-  player_num = player_num == 1 ? 2 : 1 unless round_num == 1
-  player_name = "Player #{player_num}" 
+until board.available_locations.empty?
+  current_player = current_player == p1 ? p2 : p1 unless round_num == 1
 
-  location = Location.new(board.board_locations.keys, board.available_locations, player_name).value
+  location = Location.new(board.board_locations, board.available_locations, current_player.name).value
+
+  current_player.play(board, location)
+
   puts ''
-
-  board[location] = player_num == 1 ? 'X' : 'O'
 
   10.times { print ' = ' }
   print "New board; Round #{round_num}"
@@ -172,5 +175,9 @@ until board.available_locations.empty?
   round_num += 1
 end
 
+10.times { print ' = ' }
+print 'GAME OVER'
+10.times { print ' = ' }
+puts ''
 
-board.display_grid
+puts "Locations played: #{p1.locations_played}"
