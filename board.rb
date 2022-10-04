@@ -70,6 +70,16 @@ class Board
     end
   end
 
+  def convert_index_to_location(grid_index)
+    equivalent_location = nil
+  
+    board_locations.each do |location, index|
+      equivalent_location = location if grid_index == index
+    end
+  
+    equivalent_location
+  end
+
   def update_available_locations(available_locations, location_played)
     available_locations.delete(location_played)
 
