@@ -1,9 +1,13 @@
+require_relative 'winning_logic.rb'
+
 class Board
-  attr_reader :board_locations, :available_locations
+  include WinningLogic
+
+  attr_reader :board_locations, :available_locations, :winning_combinations
 
   private
 
-  attr_writer :board_locations, :available_locations
+  attr_writer :board_locations, :available_locations, :winning_combinations
 
   attr_accessor :grid, :board_dimension, :amount_of_locations
 
@@ -20,6 +24,8 @@ class Board
     generate_locations(amount_of_locations)
 
     self.available_locations = board_locations.keys
+
+    self.winning_combinations = find_winning_combinations(grid, board_dimension)
   end
 
   def [](location)
@@ -38,6 +44,10 @@ class Board
 
   def display_grid
     puts generate_grid_output(amount_of_locations)
+  end
+
+  def winner?(player)
+    super(player.locations_played, winning_combinations)
   end
 
   private
@@ -72,11 +82,11 @@ class Board
 
   def convert_index_to_location(grid_index)
     equivalent_location = nil
-  
+
     board_locations.each do |location, index|
       equivalent_location = location if grid_index == index
     end
-  
+
     equivalent_location
   end
 
@@ -149,4 +159,3 @@ end
 # I'll remove it once i'm done with the class, so if you you're in this
 # commit, coming from a point where the class is already complete,
 # don't mind the discrepancy, there's nothing important about it.
-

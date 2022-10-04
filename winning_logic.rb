@@ -1,9 +1,8 @@
 module WinningLogic
-
   private
 
   def find_rows(grid, dimension)
-    rows = Array.new(dimension) { Array.new() }
+    rows = Array.new(dimension) { [] }
 
     grid.each_with_index do |row, row_index|
       row.each_with_index do |_col, col_index|
@@ -17,7 +16,7 @@ module WinningLogic
   end
 
   def find_columns(grid, dimension)
-    columns = Array.new(dimension) { Array.new() }
+    columns = Array.new(dimension) { [] }
 
     grid.each_with_index do |row, row_index|
       row.each_with_index do |_col, col_index|
@@ -35,7 +34,7 @@ module WinningLogic
 
     row_and_col = 0
 
-    until row_and_col >= dimension do
+    until row_and_col >= dimension
       diagonal_line_from_left << convert_index_to_location([row_and_col, row_and_col])
 
       row_and_col += 1
@@ -43,7 +42,6 @@ module WinningLogic
 
     diagonal_line_from_left
   end
-
 
   def find_diagonal_line_from_right(dimension)
     diagonal_line_from_right = []
@@ -69,4 +67,23 @@ module WinningLogic
 
     diagonal_lines
   end
-end 
+
+  def find_winning_combinations(grid, dimension)
+    winning_combinations = []
+
+    winning_combinations << find_rows(grid, dimension)
+    winning_combinations << find_columns(grid, dimension)
+    winning_combinations << find_diagonal_lines(dimension)
+
+    winning_combinations
+  end
+
+  def winner?(player_played_locations, winning_combinations)
+    winning_combinations.each do |combination_category|
+      combination_category.each do |combination|
+        return true if (combination - player_played_locations).empty?
+      end
+    end
+    false
+  end
+end
