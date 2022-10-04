@@ -21,7 +21,7 @@ class Game
 
     announce_game_start
 
-    until board.available_locations.empty?
+    until board.winner?(current_player) || board.available_locations.empty?
       current_player = toggle_current_player(current_player) unless round == 1
 
       location = Location.new(board.board_locations.keys, board.available_locations, current_player.name).value
@@ -35,6 +35,7 @@ class Game
     end
 
     announce_game_over
+    board.winner?(current_player) ? announce_winner(current_player.name) : announce_tie
   end
 
   private
@@ -47,14 +48,22 @@ class Game
   end
 
   def announce_new_round(round)
-    puts_with_padding('=', "Round #{round}")
+    puts_with_padding('*', "Round #{round}")
 
     board.display_grid
     puts ''
   end
 
   def announce_game_over
-    puts_with_padding '=', 'GAME OVER'
+    puts_with_padding('=', 'GAME OVER')
+  end
+
+  def announce_winner(winner_name)
+    puts_with_padding('=', "#{winner_name} won!!!")
+  end
+
+  def announce_tie
+    puts_with_padding('=', 'It\'s a tie')
   end
 
   def clear_terminal
