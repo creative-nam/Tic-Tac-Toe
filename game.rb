@@ -15,6 +15,28 @@ class Game
     self.board = Board.new(5)
   end
 
+  def start
+    current_player = player1
+    round = 1
+
+    announce_game_start
+
+    until board.available_locations.empty?
+      current_player = toggle_current_player(current_player) unless round == 1
+
+      location = Location.new(board.board_locations.keys, board.available_locations, current_player.name).value
+      current_player.play(board, location)
+
+      clear_terminal
+
+      announce_new_round(round)
+
+      round += 1
+    end
+
+    announce_game_over
+  end
+
   private
 
   def announce_game_start
