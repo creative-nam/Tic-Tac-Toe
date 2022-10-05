@@ -1,36 +1,20 @@
-class Location
+module Location
   private
 
-  attr_accessor :board_locations, :available_locations, :location
+  def get_location(player_name, board_locations, available_locations)
+    location = nil
 
-  public
-
-  def initialize(board_locations, available_locations, player_name)
-    self.board_locations = board_locations
-    self.available_locations = available_locations
-
-    self.location = get_location(player_name)
-  end
-
-  def value
-    location
-  end
-
-  private
-
-  def get_location(player_name)
-    user_given_location = nil
-
-    until valid?(user_given_location)
+    until valid_location?(location, board_locations, available_locations)
       puts "Where would you like to play #{player_name}?"
-      user_given_location = gets.chomp
+      location = gets.chomp
 
-      unless valid?(user_given_location)
-        error_to_output = find_error(user_given_location)
+      unless valid_location?(location, board_locations, available_locations)
+        error_to_output = find_location_error(location, board_locations, available_locations)
         puts error_to_output
       end
     end
-    user_given_location.to_i
+
+    location.to_i
   end
 
   # Here we're trying to find out if the location the user inputted is
@@ -42,30 +26,30 @@ class Location
   # An edge case would be if the location is "0". So we'll check directly
   # for that directly.
 
-  def valid_format?(location)
+  def valid_location_format?(location)
     return true if location == '0'
 
     location == location.to_i.to_s
   end
 
-  def in_range?(location)
+  def in_range?(location, board_locations)
     board_locations.include?(location.to_i)
   end
 
-  def available?(location)
+  def available_location?(location, available_locations)
     available_locations.include?(location.to_i)
   end
 
-  def valid?(location)
-    valid_format?(location) && in_range?(location) && available?(location)
+  def valid_location?(location, board_locations, available_locations)
+    valid_location_format?(location) && in_range?(location, board_locations) && available_location?(location, available_locations)
   end
 
-  def find_error(location)
-    if !valid_format?(location)
-      invalid_format_error
-    elsif !in_range?(location)
-      out_of_range_location_error(location)
-    elsif !available?(location)
+  def find_location_error(location, board_locations, available_locations)
+    if !valid_location_format?(location)
+      invalid_location_format_error
+    elsif !in_range?(location, board_locations)
+      out_of_range_location_error(location, board_locations)
+    elsif !available_location?(location, available_locations)
       filled_location_error(location)
     end
   end
@@ -77,7 +61,7 @@ class Location
     ERROR_MSG
   end
 
-  def out_of_range_location_error(location)
+  def out_of_range_location_error(location, board_locations)
     <<~ERROR_MSG
       \tERROR! The location #{location} is out of range.
       \tPlease select a valid location - FROM #{board_locations.min} to #{board_locations.max} ONLY,\
@@ -85,7 +69,7 @@ class Location
     ERROR_MSG
   end
 
-  def invalid_format_error
+  def invalid_location_format_error
     <<-ERROR_MSG
       ERROR! The location's format is invalid.
       The location must be a positive, whole number, inside the given range.

@@ -1,8 +1,10 @@
-require_relative 'helper_classes/player_name.rb'
-require_relative 'helper_classes/player_symbol.rb'
-require_relative 'helper_classes/location.rb'
+require_relative 'helper_classes/player_name'
+require_relative 'helper_classes/player_symbol'
+require_relative 'helper_classes/location'
 
 class Player
+  include Location
+
   attr_accessor :name, :symbol, :locations_played
 
   @@current_player = 1
@@ -26,12 +28,16 @@ class Player
 
   def play(board, location)
     board[location] = symbol
-  
+
     locations_played << location
   end
 
   def toggle_current_player
     @@current_player = @@current_player == 1 ? 2 : 1
+  end
+
+  def get_location(board_locations, available_locations)
+    super(name, board_locations, available_locations)
   end
 end
 

@@ -24,7 +24,7 @@ class Game
     until board.winner?(current_player) || board.available_locations.empty?
       current_player = toggle_current_player(current_player) unless round == 1
 
-      location = Location.new(board.board_locations.keys, board.available_locations, current_player.name).value
+      location = current_player.get_location(board.board_locations.keys, board.available_locations)
       current_player.play(board, location)
 
       clear_terminal
