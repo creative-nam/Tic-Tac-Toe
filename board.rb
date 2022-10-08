@@ -1,15 +1,17 @@
+require_relative 'helper_classes/location.rb'
 require_relative 'winning_logic.rb'
 
 class Board
+  include Location
   include WinningLogic
 
-  attr_reader :board_locations, :available_locations, :winning_combinations
+  attr_reader :locations, :available_locations, :winning_combinations
 
   private
 
-  attr_writer :board_locations, :available_locations, :winning_combinations
+  attr_writer :locations,  :available_locations, :winning_combinations
 
-  attr_accessor :grid, :board_dimension, :amount_of_locations
+  attr_accessor :grid, :board_dimension, :amount_of_locations, :locations_map
 
   public
 
@@ -18,24 +20,23 @@ class Board
     self.amount_of_locations = board_dimension**2
 
     self.grid = Array.new(board_dimension) { Array.new(board_dimension) }
-    populate_grid(amount_of_locations)
+    self.grid = populate_grid(grid)
 
-    self.board_locations = Hash.new(amount_of_locations)
-    generate_locations(amount_of_locations)
-
-    self.available_locations = board_locations.keys
+    self.locations_map = generate_locations_map(grid)
+    self.locations = locations_map.keys
+    self.available_locations = locations_map.keys
 
     self.winning_combinations = find_winning_combinations(grid, board_dimension)
   end
 
   def [](location)
-    row, col = board_locations[location]
+    row, col = locations_map[location]
 
     grid[row][col]
   end
 
   def []=(location, player_symbol)
-    row, col = board_locations[location]
+    row, col = locations_map[location]
 
     grid[row][col] = player_symbol
 
@@ -52,48 +53,14 @@ class Board
 
   private
 
-  def populate_grid(amount_of_locations)
-    location_number = 1
-
-    while location_number <= amount_of_locations
-      grid.each_with_index do |row, row_index|
-        row.each_with_index do |_col, col_index|
-          grid[row_index][col_index] = location_number
-
-          location_number += 1
-        end
-      end
-    end
-  end
-
-  def generate_locations(amount_of_locations)
-    location = 1
-
-    while location <= amount_of_locations
-      grid.each_with_index do |row, row_index|
-        row.each_with_index do |_col, col_index|
-          board_locations[location] = [row_index, col_index]
-
-          location += 1
-        end
-      end
-    end
-  end
-
-  def convert_index_to_location(grid_index)
-    equivalent_location = nil
-
-    board_locations.each do |location, index|
-      equivalent_location = location if grid_index == index
-    end
-
-    equivalent_location
-  end
-
   def update_available_locations(available_locations, location_played)
     available_locations.delete(location_played)
 
     self.available_locations = available_locations
+  end
+
+  def convert_index_to_location(grid_index)
+    super(locations_map, grid_index)
   end
 
   def generate_grid_output(amount_of_locations)
@@ -110,7 +77,7 @@ class Board
     grid_output += "\t"
     grid.length.times { grid_output += lines_separation }
 
-    current_location_number = board_locations.keys.min
+    current_location_number = locations.min
 
     grid.each_with_index do |row, row_index|
       grid_output += "\n" + "\t" + "\n" + "\t"
