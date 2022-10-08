@@ -4,6 +4,7 @@ require_relative 'helper_classes/location'
 
 class Player
   include Location
+  include PlayerName
 
   attr_accessor :name, :symbol, :locations_played
 
@@ -15,7 +16,7 @@ class Player
   def initialize
     self.locations_played = []
 
-    self.name = PlayerName.new(@@current_player, @@taken_name).value
+    self.name = get_name(@@current_player, @@taken_name)
     self.symbol = PlayerSymbol.new(name, @@taken_symbol).value
 
     if @@current_player == 1

@@ -1,44 +1,27 @@
-class PlayerName
+module PlayerName
   private
 
-  attr_accessor :current_player, :taken_name, :name
+  def get_name(current_player, taken_name = nil)
+    name = nil
 
-  public
+    until name && valid_name?(name, taken_name)
+      puts name_prompt_message(current_player, taken_name)
+      name = gets.chomp
 
-  def initialize(current_player = 1, taken_name = nil)
-    self.current_player = current_player
-    self.taken_name = name
+      unless valid_name?(name, taken_name)
+        error_to_output = find_name_error(name, taken_name)
+        puts error_to_output
+      end
+    end
 
-    self.name = get_name(taken_name)
-  end
-
-  def value
     name
   end
 
-  private
-
-  def get_name(taken_name = nil)
-    user_input = nil
-
-    until user_input && valid?(user_input)
-      puts ''
-      10.times { print '---' }
-      puts ''
-
-      puts name_prompt_message(current_player, taken_name)
-      user_input = gets.chomp
-
-      puts find_error(user_input) unless valid?(user_input)
-    end
-    user_input
+  def valid_name?(name, taken_name)
+    valid_name_chars?(name) && available_name?(name, taken_name)
   end
 
-  def valid?(name)
-    valid_chars?(name) && !taken?(name)
-  end
-
-  def valid_chars?(name)
+  def valid_name_chars?(name)
     # This is a regex that will match only alphanumerical chars
     # (including letters of any language) and underscores
     accepted_chars = /^\w+$/
@@ -46,15 +29,15 @@ class PlayerName
     name.match?(accepted_chars)
   end
 
-  def taken?(name)
-    name == taken_name
+  def available_name?(name, taken_name)
+    name != taken_name
   end
 
-  def find_error(name)
-    taken?(name) ? taken_name_error(name) : invalid_chars_error
+  def find_name_error(name, taken_name)
+    available_name?(name, taken_name) ? invalid_name_chars_error : taken_name_error(name)
   end
 
-  def invalid_chars_error
+  def invalid_name_chars_error
     <<-ERROR_MSG
       ERROR! Invalid name.
       Your name can only contain alphanumerical characters, and underscores.
@@ -69,9 +52,13 @@ class PlayerName
   end
 
   def name_prompt_message(current_player, taken_name)
+    line_decorator = ''
+    30.times { line_decorator += '-' }  
+
     taken_name_warning = "(Your name cannot be #{taken_name}, since it's taken.)"
 
     msg = <<~NAME_PROMPT_MSG
+      #{line_decorator}
       Please enter Player #{current_player}'s name:#{' '}
     NAME_PROMPT_MSG
 
