@@ -5,6 +5,7 @@ require_relative 'helper_classes/location'
 class Player
   include Location
   include PlayerName
+  include PlayerSymbol
 
   attr_accessor :name, :symbol, :locations_played
 
@@ -17,7 +18,7 @@ class Player
     self.locations_played = []
 
     self.name = get_name(@@current_player, @@taken_name)
-    self.symbol = PlayerSymbol.new(name, @@taken_symbol).value
+    self.symbol = get_symbol(name, @@taken_symbol)
 
     if @@current_player == 1
       @@taken_name = name

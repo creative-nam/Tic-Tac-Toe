@@ -1,44 +1,23 @@
-class PlayerSymbol
-  private
-
-  attr_accessor :player_name, :taken_symbol, :symbol
-
-  public
-
+module PlayerSymbol
   @@accepted_special_chars = ['<', '>', '&', '+', '=', '?', '@', '#']
-
-  def initialize(player_name, taken_symbol = nil)
-    self.player_name = player_name
-    self.taken_symbol = taken_symbol
-
-    self.symbol = get_symbol(player_name, taken_symbol)
-  end
-
-  def value
-    symbol
-  end
 
   private
 
   def get_symbol(player_name, taken_symbol)
-    user_input = nil
+    symbol = nil
 
-    until user_input && valid?(user_input)
-      puts ''
-      10.times { print '---' }
-      puts ''
-
+    until symbol && valid_symbol?(symbol, taken_symbol)
       puts symbol_prompt_message(player_name, taken_symbol)
-      user_input = gets.chomp
+      symbol = gets.chomp
 
-      puts find_error(user_input) unless valid?(user_input)
+      error_to_output = find_symbol_error(symbol, taken_symbol) and puts error_to_output
     end
 
-    user_input
+    symbol
   end
 
-  def valid?(symbol)
-    valid_length?(symbol) && valid_char?(symbol) && !taken?(symbol)
+  def valid_symbol?(symbol, taken_symbol)
+    valid_length?(symbol) && valid_char?(symbol) && available_symbol?(symbol, taken_symbol)
   end
 
   def valid_length?(symbol)
@@ -51,16 +30,16 @@ class PlayerSymbol
     alpha_regex.match?(symbol) || @@accepted_special_chars.include?(symbol)
   end
 
-  def taken?(symbol)
-    symbol == taken_symbol
+  def available_symbol?(symbol, taken_symbol)
+    symbol != taken_symbol
   end
 
-  def find_error(symbol)
+  def find_symbol_error(symbol, taken_symbol)
     if !valid_length?(symbol)
       invalid_length_error
     elsif !valid_char?(symbol)
       invalid_char_error
-    elsif taken?(symbol)
+    elsif !available_symbol?(symbol, taken_symbol)
       taken_symbol_error(symbol)
     end
   end
@@ -88,9 +67,12 @@ class PlayerSymbol
   end
 
   def symbol_prompt_message(player_name, taken_symbol)
+    line_decorator = ''
+    30.times { line_decorator += '-' } 
     taken_symbol_warning = "(Your symbol cannot be #{taken_symbol}, since it's taken)"
 
     msg = <<~SYMBOL_PROMPT_MSG
+      #{line_decorator}
       #{player_name}, please enter a single character as your symbol:
       (Your symbol can be a letter, or one of the following special \
       characters: #{@@accepted_special_chars})
