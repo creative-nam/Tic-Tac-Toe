@@ -1,5 +1,5 @@
-require_relative 'helper_classes/location.rb'
-require_relative 'winning_logic.rb'
+require_relative 'helper_classes/location'
+require_relative 'winning_logic'
 
 class Board
   include Location
@@ -9,7 +9,7 @@ class Board
 
   private
 
-  attr_writer :locations,  :available_locations, :winning_combinations
+  attr_writer :locations, :available_locations, :winning_combinations
 
   attr_accessor :grid, :board_dimension, :amount_of_locations, :locations_map
 
@@ -65,40 +65,73 @@ class Board
 
   def generate_grid_output(amount_of_locations)
     grid_output = ''
-
-    max_location_digits = get_location_digits(amount_of_locations)
-
-    underscores = ''
-    max_location_digits.times { underscores += '_' }
-
-    space_between_numbers = ' ' + ' ' + ' ' + ' ' + ' '
-    lines_separation = underscores + space_between_numbers
-
-    grid_output += "\t"
-    grid.length.times { grid_output += lines_separation }
+    grid_output = break_line_and_indent(grid_output)
 
     current_location_number = locations.min
+    max_location_digits = get_location_digits(amount_of_locations)
 
-    grid.each_with_index do |row, row_index|
-      grid_output += "\n" + "\t" + "\n" + "\t"
+    grid_output = separate_line(grid_output, grid.length, max_location_digits)
 
-      row.each_with_index do |_col, col_index|
-        current_square = grid[row_index][col_index]
+    grid.each do |row|
+      grid_output = break_line_and_indent(grid_output, 2)
 
-        length_difference = max_location_digits - find_square_length(current_square)
-        length_difference.times { grid_output += ' ' }
-
-        grid_output += current_square.to_s
-        grid_output += ' ' + ' ' + '|' + ' ' + ' ' unless col_index == row.length - 1
+      row.each_with_index do |col, col_index|
+        grid_output = add_whitespace_padding(grid_output, max_location_digits, col)
+        grid_output += col.to_s
+        grid_output = add_char_separator(grid_output) unless col_index == row.length - 1
 
         current_location_number += 1
       end
 
-      grid_output += "\n" + "\t"
-      grid.length.times { grid_output += lines_separation }
+      grid_output = break_line_and_indent(grid_output, 2)
+      grid_output = separate_line(grid_output, grid.length, max_location_digits)
     end
 
     grid_output
+  end
+
+  def add_char_separator(board_representation)
+    whitespace_between_chars = ' ' + ' '
+    separator_char = '|'
+
+    board_representation += whitespace_between_chars + separator_char + whitespace_between_chars
+
+    board_representation
+  end
+
+  def break_line_and_indent(board_representation, amount_of_times = 1)
+    amount_of_times.times { board_representation += "\n" + "\t" }
+
+    board_representation
+  end
+
+  def separate_line(board_representation, chars_in_line, max_digits_to_cover)
+    trail_char = ''
+    max_digits_to_cover.times { trail_char += '-' }
+    whitespace_between_chars = ' ' + ' '
+    separator_char = '+'
+
+    space_between_chars = whitespace_between_chars + separator_char + whitespace_between_chars
+
+    lines_separation = trail_char + space_between_chars
+
+    current_char = 1
+
+    chars_in_line.times do
+      last_char = current_char == chars_in_line
+      board_representation += last_char ? trail_char : lines_separation
+
+      current_char += 1
+    end
+
+    board_representation
+  end
+
+  def add_whitespace_padding(board_representation, max_location_digits, grid_square)
+    length_difference = max_location_digits - find_element_length(grid_square)
+    length_difference.times { board_representation += ' ' }
+
+    board_representation
   end
 
   def get_location_digits(location_number)
@@ -111,12 +144,12 @@ class Board
   # so we know it hasn't been selected. Otherwise, it'll be a string - the
   # symbol of the player which has selected it. And in that case, it has been filled.
 
-  def square_filled?(grid_square)
+  def element_filled?(grid_square)
     grid_square.instance_of?(String)
   end
 
-  def find_square_length(square)
-    square_filled?(square) ? square.length : get_location_digits(square)
+  def find_element_length(grid_square)
+    element_filled?(grid_square) ? grid_square.length : get_location_digits(grid_square)
   end
 end
 
