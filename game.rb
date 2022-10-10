@@ -43,14 +43,14 @@ class Game
   def announce_game_start
     puts_with_padding('=', 'NEW GAME INITIATED')
 
-    board.display_grid
+    board.display_board
     puts ''
   end
 
   def announce_new_round(round)
     puts_with_padding('*', "Round #{round}")
 
-    board.display_grid
+    board.display_board
     puts ''
   end
 
