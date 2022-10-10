@@ -66,10 +66,3 @@ class Board
     super(locations_map, grid_index)
   end
 end
-
-# Don't mind the pieces of code bellow, i'm just testing the class
-# as i go, to check if it's producing the desired behaviors/results
-
-# I'll remove it once i'm done with the class, so if you you're in this
-# commit, coming from a point where the class is already complete,
-# don't mind the discrepancy, there's nothing important about it.
