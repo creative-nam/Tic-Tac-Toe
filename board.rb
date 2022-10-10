@@ -1,10 +1,12 @@
-require_relative 'helper_classes/location'
-require_relative 'helper_classes/board_representation'
+require_relative 'helper_methods/board_dimension'
+require_relative 'helper_methods/board_representation'
+require_relative 'helper_methods/location'
 require_relative 'winning_logic'
 
 class Board
   include Location
   include WinningLogic
+  include BoardDimension
 
   attr_reader :locations, :available_locations, :winning_combinations
 
@@ -12,22 +14,22 @@ class Board
 
   attr_writer :locations, :available_locations, :winning_combinations
 
-  attr_accessor :grid, :board_dimension, :amount_of_locations, :locations_map
+  attr_accessor :grid, :dimension, :amount_of_locations, :locations_map
 
   public
 
-  def initialize(board_dimension)
-    self.board_dimension = board_dimension
-    self.amount_of_locations = board_dimension**2
+  def initialize
+    self.dimension = get_dimension
+    self.amount_of_locations = dimension**2
 
-    self.grid = Array.new(board_dimension) { Array.new(board_dimension) }
+    self.grid = Array.new(dimension) { Array.new(dimension) }
     self.grid = populate_grid(grid)
 
     self.locations_map = generate_locations_map(grid)
     self.locations = locations_map.keys
     self.available_locations = locations_map.keys
 
-    self.winning_combinations = find_winning_combinations(grid, board_dimension)
+    self.winning_combinations = find_winning_combinations(grid, dimension)
   end
 
   def [](location)

@@ -12,7 +12,7 @@ class Game
     self.player1 = Player.new
     self.player2 = Player.new
 
-    self.board = Board.new(5)
+    self.board = Board.new
   end
 
   def start
