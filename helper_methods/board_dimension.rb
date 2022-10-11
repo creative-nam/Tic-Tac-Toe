@@ -54,7 +54,9 @@ module BoardDimension
   end
 
   def dimension_prompt_message
-    line_decorator = ''
+    line_decorator = "\n"
+    30.times { line_decorator += '-' }
+    line_decorator += ' Choose the Board\'s dimension '
     30.times { line_decorator += '-' }
 
     <<~PROMPT_MSG

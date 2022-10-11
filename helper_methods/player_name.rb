@@ -52,8 +52,10 @@ module PlayerName
   end
 
   def name_prompt_message(current_player, taken_name)
-    line_decorator = ''
-    30.times { line_decorator += '-' }  
+    line_decorator = "\n"
+    35.times { line_decorator += '-' }
+    line_decorator += ' Choose your name '
+    35.times { line_decorator += '-' } 
 
     taken_name_warning = "(Your name cannot be #{taken_name}, since it's taken.)"
 

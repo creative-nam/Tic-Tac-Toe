@@ -67,8 +67,11 @@ module PlayerSymbol
   end
 
   def symbol_prompt_message(player_name, taken_symbol)
-    line_decorator = ''
-    30.times { line_decorator += '-' } 
+    line_decorator = "\n"
+    35.times { line_decorator += '-' }
+    line_decorator += ' Choose your symbol '
+    35.times { line_decorator += '-' }
+
     taken_symbol_warning = "(Your symbol cannot be #{taken_symbol}, since it's taken)"
 
     msg = <<~SYMBOL_PROMPT_MSG
