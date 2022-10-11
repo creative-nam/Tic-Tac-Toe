@@ -1,6 +1,6 @@
-require_relative 'helper_methods/player_name'
-require_relative 'helper_methods/player_symbol'
-require_relative 'helper_methods/location'
+require_relative 'input_validation/player_name'
+require_relative 'input_validation/player_symbol'
+require_relative 'input_validation/location'
 
 class Player
   include Location

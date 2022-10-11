@@ -1,5 +1,5 @@
-require_relative 'helper_methods/board_dimension'
-require_relative 'helper_methods/board_representation'
+require_relative 'board_representation'
+require_relative 'input_validation/board_dimension'
 require_relative 'winning_logic'
 
 class Board
