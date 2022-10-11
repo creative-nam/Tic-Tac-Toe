@@ -31,7 +31,7 @@ module BoardDimension
   end
 
   def find_dimension_error(dimension)
-    dimension_in_range(dimension) ? invalid_dimension_format_error : out_of_range_dimension_error(dimension)
+    dimension_in_range?(dimension) ? invalid_dimension_format_error : out_of_range_dimension_error(dimension)
   end
 
   def valid_dimension?(dimension)
